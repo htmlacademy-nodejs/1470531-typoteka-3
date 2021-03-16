@@ -8,7 +8,7 @@ const CategoryService = require(`../data-service/category-service`);
 const CommentService = require(`../data-service/comment-service`);
 const upload = require(`../../configs/upload-folder`);
 const {getFormattedTime} = require(`../../utils/get-formatted-time`);
-const {privateRoute} = require(`../../backend/middlewares/privateRoute`);
+const {privateRoute} = require(`../../backend/middlewares/private-route`);
 const {getErrorTemplate} = require(`../../utils/get-error-template`);
 const {getLogger} = require(`../../libs/logger`);
 
@@ -128,8 +128,8 @@ articlesRoutes.get(`/:id`, async (req, res) => {
     res.render(`post`, {
       isLoggedIn,
       user,
-      article,
-      categories,
+      article: getFormattedTime([article], `publicationDate`)[0],
+      categories: categories.filter((category) => category.count > 0),
       comments: getFormattedTime(comments, `createdAt`),
       currentComment: ``,
     });
