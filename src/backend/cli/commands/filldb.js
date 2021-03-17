@@ -72,7 +72,7 @@ const getUsers = (amount, firstNames, lastNames, hash) =>
       const id = index + 1;
 
       return {
-        'avatar': `avatar-${getRandomInt(0, 5)}.png`,
+        'avatar': `avatar-${getRandomInt(1, 5)}.png`,
         'email': `user${id}@mail.io`,
         'firstname': firstNames[getRandomInt(0, firstNames.length - 1)],
         'lastname': lastNames[getRandomInt(0, lastNames.length - 1)],
@@ -104,11 +104,12 @@ const getArticles = (amount, sentences, titles, numberOfUsers) =>
       'user_id': getRandomInt(1, numberOfUsers),
     }));
 
-const run = async (count) => {
+const run = async (rawCount) => {
   try {
     const numberOfCategories = getRandomInt(MIN_CATEGORIES, MAX_CATEGORIES);
     const numberOfUsers = getRandomInt(MIN_USERS, MAX_USERS);
-    const numberOfArticles = normalizeCount(count);
+    const numberOfArticles = normalizeCount(rawCount);
+    const count = parseInt(rawCount, 10);
     const numberOfComments = numberOfArticles * 4;
 
     const titlesData = await readContent(FILE_TITLES_PATH);
@@ -127,10 +128,10 @@ const run = async (count) => {
 
     await initDb();
 
-    await User.bulkCreate(users);
-    await Article.bulkCreate(articles);
-    await Comment.bulkCreate(comments);
-    await Category.bulkCreate(categories);
+    await User.bulkCreate(count ? users : []);
+    await Article.bulkCreate(count ? articles : []);
+    await Comment.bulkCreate(count ? comments : []);
+    await Category.bulkCreate(count ? categories : []);
 
     const allArticles = await Article.findAll();
     const allCategories = await Category.findAll();
